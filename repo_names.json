@@ -1,0 +1,55 @@
+[
+    {
+        "name": "clangd",
+        "user": "clangd",
+        "repo": "clangd",
+        "file_pattern": "clangd-linux-###.zip",
+        "bin_dir_pattern": "clangd_###/bin",
+        "uncompress_cmd": "unzip",
+        "uncompress": true
+    },
+    {
+        "name": "gh",
+        "user": "cli",
+        "repo": "cli",
+        "file_pattern": "gh_###_linux_amd64.tar.gz",
+        "remove_v": true,
+        "bin_dir_pattern": "gh_###_linux_amd64/bin",
+        "uncompress_cmd": "tar",
+        "uncompress_flags": "zxf",
+        "uncompress": true
+    },
+    {
+        "name": "rg",
+        "user": "BurntSushi",
+        "repo": "ripgrep",
+        "file_pattern": "ripgrep-###-x86_64-unknown-linux-musl.tar.gz",
+        "bin_dir_pattern": "ripgrep-###-x86_64-unknown-linux-musl",
+        "copy_to_bin": true,
+        "uncompress_cmd": "tar",
+        "uncompress_flags": "zxf",
+        "uncompress": true
+    },
+    {
+        "name": "bat",
+        "user": "sharkdp",
+        "repo": "bat",
+        "file_pattern": "bat-###-x86_64-unknown-linux-musl.tar.gz",
+        "bin_dir_pattern": "bat-###-x86_64-unknown-linux-musl",
+        "copy_to_bin": true,
+        "uncompress_cmd": "tar",
+        "uncompress_flags": "zxf",
+        "uncompress": true
+    },
+    {
+        "name": "lf",
+        "user": "gokcehan",
+        "repo": "lf",
+        "file_pattern": "lf-linux-amd64.tar.gz",
+        "uncompress_cmd": "tar",
+        "uncompress_flags": "zxf",
+        "uncompress": true,
+        "bin_dir_pattern": "",
+        "copy_to_bin": true
+    }
+]
