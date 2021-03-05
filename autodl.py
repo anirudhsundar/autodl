@@ -17,10 +17,10 @@ def get_url(user, repo, file_pattern, remove_v=False):
 
     result_str = ''
     if sys.version_info.major == 3:
-        result = subprocess.check_output(["curl", "https://api.github.com/repos/{0}/{1}/releases/latest".format(user, repo)])
+        result = subprocess.check_output(["curl", "-s", "https://api.github.com/repos/{0}/{1}/releases/latest".format(user, repo)])
         result_str = result.decode('utf-8')
     elif sys.version_info.major == 2:
-        result = subprocess.check_output(["curl", "https://api.github.com/repos/{0}/{1}/releases/latest".format(user, repo)])
+        result = subprocess.check_output(["curl", "-s", "https://api.github.com/repos/{0}/{1}/releases/latest".format(user, repo)])
         result_str = result
 
     if not result:
@@ -40,27 +40,29 @@ def get_url(user, repo, file_pattern, remove_v=False):
     download_url = "https://github.com/{0}/{1}/releases/download/{2}/{3}".format(user, repo, tag_name, file_pattern)
     return download_url, file_tag, file_pattern
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-o', '--output', help = 'Output directory')
-    parser.add_argument('-p', '--paths', help = 'File to append PATHs to')
+def add_arguments():
+    parser = argparse.ArgumentParser(description='A simple tool that reads repository information from repo_names.json in the current directory and downloads the latest release versions of the given repos from github')
+    parser.add_argument('-o', '--output', help = 'Output directory', default=os.getcwd())
+    parser.add_argument('-p', '--paths', help = 'File to append PATHs to', default=os.getcwd()+'/.local_paths')
     parser.add_argument('-n','--dry-run', help = 'Just print the URLs to be downloaded without downloading', action='store_true')
     parser.add_argument('-d', '--download-only', help = 'Download the compressed files', action='store_true')
-    args = parser.parse_args()
-    dotfiles_dir = os.getcwd()
+    parser.add_argument('-b', '--bin-directory', help='Default bin directory to copy the files to', default=os.path.expanduser('~') + '/' + 'bin')
+    return parser.parse_args()
 
-    output = os.getcwd()
-    if args.output:
-        output = args.output
 
-    paths = os.path.expanduser('~')+'/.local_paths'
-    if args.paths:
-        paths = args.paths
+def main():
 
-    download_only = args.download_only
+    args = add_arguments()
+
+    output = args.output
+    paths = args.paths
     dry_run = args.dry_run
+    download_only = args.download_only
+    bin_directory = args.bin_directory
 
     paths_to_append = []
+    urls = []
+    files = []
 
     tool_config = json.load(open('repo_names.json', 'r'))
     for tool in tool_config:
@@ -77,12 +79,14 @@ def main():
 
         url, tag, filename = get_url(user, repo, file_pattern, remove_v=remove_v)
         if dry_run:
-            print (url)
+            urls.append(url)
             continue
 
+        print('Downloading from... {0}'.format(url))
         full_filename = output + '/' + filename
-        subprocess.check_output(['wget', '-P', output, url])
+        subprocess.check_output(['wget', '-q', '-P', output, url])
         if download_only:
+            files.append(filename)
             continue
 
         os.chdir(output)
@@ -97,11 +101,19 @@ def main():
             if 'copy_to_bin' not in tool:
                 paths_to_append.append('export PATH='+bin_path+':$PATH')
             else:
-                subprocess.check_output(['cp',bin_path+'/'+tool['name'],os.path.expanduser('~') + '/' + 'bin'])
+                subprocess.check_output(['cp',bin_path+'/'+tool['name'],bin_directory])
 
-    print('All files downloaded... Add below paths to PATH')
-    with open(paths, "a") as paths_file:
-        paths_file.write('\n'.join(paths_to_append))
+    if dry_run:
+        print('\nDry run completed. The URLs that would be downloaded are listed below:')
+        print('\n'.join(urls))
+    elif download_only:
+        print('\nThe list of files downloaded are printed below:')
+        print('\n'.join(files))
+    else:
+        print('All files downloaded and the below statements have been added to '+paths)
+        print('\n'.join(paths_to_append))
+        with open(paths, "a") as paths_file:
+            paths_file.write('\n'.join(paths_to_append))
 
 if __name__ == '__main__':
     main()
