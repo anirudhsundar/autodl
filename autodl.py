@@ -47,7 +47,7 @@ def add_arguments():
     parser.add_argument('-p', '--paths', help = 'File to append PATHs to', default=os.path.expanduser('~') + '/.local_paths')
     parser.add_argument('-n','--dry-run', help = 'Just print the URLs to be downloaded without downloading', action='store_true')
     parser.add_argument('-d', '--download-only', help = 'Download the compressed files', action='store_true')
-    parser.add_argument('-b', '--bin-directory', help='Default bin directory to copy the files to', default=os.path.expanduser('~') + '/' + 'bin')
+    parser.add_argument('-b', '--bin-directory', help='Default bin directory to copy the files to', default=os.path.expanduser('~') + '/' + '.bin')
     return parser.parse_args()
 
 
