@@ -51,5 +51,16 @@
         "uncompress": true,
         "bin_dir_pattern": "",
         "copy_to_bin": true
+    },
+    {
+        "name": "broot",
+        "user": "Canop",
+        "repo": "broot",
+        "remove_v": true,
+        "file_pattern": "broot_###.zip",
+        "uncompress_cmd": "unzip",
+        "uncompress_flags": "-dbroot_all",
+        "uncompress": true,
+        "bin_dir_pattern": "broot_all/build/x86_64-unknown-linux-musl"
     }
 ]

@@ -2,6 +2,7 @@ import os, sys
 import json
 import subprocess
 import argparse
+import re
 
 def print_error_valid(msg):
     print("ERROR: Please provide a valid {0}".format(msg))
@@ -43,7 +44,7 @@ def get_url(user, repo, file_pattern, remove_v=False):
 def add_arguments():
     parser = argparse.ArgumentParser(description='A simple tool that reads repository information from repo_names.json in the current directory and downloads the latest release versions of the given repos from github')
     parser.add_argument('-o', '--output', help = 'Output directory', default=os.getcwd())
-    parser.add_argument('-p', '--paths', help = 'File to append PATHs to', default=os.getcwd()+'/.local_paths')
+    parser.add_argument('-p', '--paths', help = 'File to append PATHs to', default=os.path.expanduser('~') + '/.local_paths')
     parser.add_argument('-n','--dry-run', help = 'Just print the URLs to be downloaded without downloading', action='store_true')
     parser.add_argument('-d', '--download-only', help = 'Download the compressed files', action='store_true')
     parser.add_argument('-b', '--bin-directory', help='Default bin directory to copy the files to', default=os.path.expanduser('~') + '/' + 'bin')
@@ -54,11 +55,11 @@ def main():
 
     args = add_arguments()
 
-    output = args.output
-    paths = args.paths
+    output = args.output.strip()
+    paths = args.paths.strip()
     dry_run = args.dry_run
     download_only = args.download_only
-    bin_directory = args.bin_directory
+    bin_directory = args.bin_directory.strip()
 
     paths_to_append = []
     urls = []
@@ -73,6 +74,9 @@ def main():
         uncompress_flags = ''
         if 'uncompress_flags' in tool:
             uncompress_flags = tool['uncompress_flags']
+            uncompress_flags = re.sub('\s+', ' ', uncompress_flags.strip())
+            print(uncompress_flags)
+
         remove_v = False
         if "remove_v" in tool:
             remove_v = True
@@ -111,9 +115,11 @@ def main():
         print('\n'.join(files))
     else:
         print('All files downloaded and the below statements have been added to '+paths)
-        print('\n'.join(paths_to_append))
+        paths_to_append = '\n'.join(paths_to_append)
+        paths_to_append = '\n'+paths_to_append
+        print(paths_to_append)
         with open(paths, "a") as paths_file:
-            paths_file.write('\n'.join(paths_to_append))
+            paths_file.write(paths_to_append)
 
 if __name__ == '__main__':
     main()
