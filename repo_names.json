@@ -62,5 +62,15 @@
         "uncompress_flags": "-dbroot_all",
         "uncompress": true,
         "bin_dir_pattern": "broot_all/build/x86_64-unknown-linux-musl"
+    },
+    {
+        "name": "nvim",
+        "user": "neovim",
+        "repo": "neovim",
+        "file_pattern": "nvim-linux64.tar.gz",
+        "uncompress_cmd": "tar",
+        "uncompress_flags": "zxf",
+        "uncompress": true,
+        "bin_dir_pattern": "nvim-linux64/bin"
     }
 ]

@@ -75,7 +75,6 @@ def main():
         if 'uncompress_flags' in tool:
             uncompress_flags = tool['uncompress_flags']
             uncompress_flags = re.sub('\s+', ' ', uncompress_flags.strip())
-            print(uncompress_flags)
 
         remove_v = False
         if "remove_v" in tool:
