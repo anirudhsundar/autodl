@@ -44,10 +44,12 @@ def get_url(user, repo, file_pattern, remove_v=False):
 def add_arguments():
     parser = argparse.ArgumentParser(description='A simple tool that reads repository information from repo_names.json in the current directory and downloads the latest release versions of the given repos from github')
     parser.add_argument('-o', '--output', help = 'Output directory', default=os.getcwd())
-    parser.add_argument('-p', '--paths', help = 'File to append PATHs to', default=os.path.expanduser('~') + '/.local_paths')
+    parser.add_argument('-p', '--paths', help = 'File to append PATHs to', default=os.path.expanduser('~') + '/.autodl_paths.sh')
     parser.add_argument('-n','--dry-run', help = 'Just print the URLs to be downloaded without downloading', action='store_true')
     parser.add_argument('-d', '--download-only', help = 'Download the compressed files', action='store_true')
     parser.add_argument('-b', '--bin-directory', help='Default bin directory to copy the files to', default=os.path.expanduser('~') + '/' + '.bin/local')
+    parser.add_argument('-i', '--include', help='Comma separated list of tool names (as mentioned in repo_names.json) to download. Cannot be used with --exclude. Eg: clangd,gh,bat')
+    parser.add_argument('-e', '--exclude', help='Comma separated list of tool names (as mentioned in repo_names.json) to exclude. Cannot be used with --include. Eg: clangd,gh,bat')
     return parser.parse_args()
 
 
@@ -60,6 +62,14 @@ def main():
     dry_run = args.dry_run
     download_only = args.download_only
     bin_directory = args.bin_directory.strip()
+    include, exclude = [], []
+    if args.include:
+      include = args.include.split(",")
+    if args.exclude:
+      exclude = args.exclude.split(",")
+
+    if include and exclude:
+      print('ERROR: Cannot use both "--include" and "--exclude" flags simultaneously. Please remove one of them')
 
     paths_to_append = []
     urls = []
@@ -67,6 +77,11 @@ def main():
 
     tool_config = json.load(open('repo_names.json', 'r'))
     for tool in tool_config:
+        tool_name = tool['name']
+        if include and tool_name not in include:
+          continue
+        if exclude and tool_name in exclude:
+          continue
         user = tool['user']
         repo = tool['repo']
         file_pattern = tool['file_pattern']
@@ -104,7 +119,7 @@ def main():
             if 'copy_to_bin' not in tool:
                 paths_to_append.append('export PATH='+bin_path+':$PATH')
             else:
-                subprocess.check_output(['cp',bin_path+'/'+tool['name'],bin_directory])
+                subprocess.check_output(['cp', bin_path + '/' + tool_name, bin_directory])
 
     if dry_run:
         print('\nDry run completed. The URLs that would be downloaded are listed below:')
