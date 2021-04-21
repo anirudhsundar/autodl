@@ -72,5 +72,16 @@
         "uncompress_flags": "zxf",
         "uncompress": true,
         "bin_dir_pattern": "nvim-linux64/bin"
+    },
+    {
+        "name": "jq",
+        "user": "stedolan",
+        "repo": "jq",
+        "file_pattern": "jq-linux64",
+        "uncompress": false,
+        "bin_dir_pattern": "",
+        "copy_to_bin": true,
+        "copy_source_name": "jq-linux64",
+        "chmod": "+x"
     }
 ]

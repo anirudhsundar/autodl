@@ -85,11 +85,13 @@ def main():
         user = tool['user']
         repo = tool['repo']
         file_pattern = tool['file_pattern']
-        uncompress_cmd = tool['uncompress_cmd']
-        uncompress_flags = ''
-        if 'uncompress_flags' in tool:
-            uncompress_flags = tool['uncompress_flags']
-            uncompress_flags = re.sub('\s+', ' ', uncompress_flags.strip())
+
+        if 'uncompress' in tool and tool['uncompress']:
+          uncompress_cmd = tool['uncompress_cmd']
+          uncompress_flags = ''
+          if 'uncompress_flags' in tool:
+              uncompress_flags = tool['uncompress_flags']
+              uncompress_flags = re.sub('\s+', ' ', uncompress_flags.strip())
 
         remove_v = False
         if "remove_v" in tool:
@@ -108,18 +110,26 @@ def main():
             continue
 
         os.chdir(output)
-        if 'uncompress' in tool:
+        if 'uncompress' in tool and tool['uncompress']:
             if uncompress_flags:
                 subprocess.check_output([uncompress_cmd, uncompress_flags, full_filename])
             else:
                 subprocess.check_output([uncompress_cmd, full_filename])
         if 'bin_dir_pattern' in tool:
             bin_path = tool['bin_dir_pattern'].replace('###',tag)
-            bin_path = output + '/' + bin_path
+            full_bin_path = output + '/' + bin_path
             if 'copy_to_bin' not in tool:
-                paths_to_append.append('export PATH='+bin_path+':$PATH')
+                paths_to_append.append('export PATH='+full_bin_path+':$PATH')
             else:
-                subprocess.check_output(['cp', bin_path + '/' + tool_name, bin_directory])
+                if tool['copy_source_name']:
+                    output_file_path = bin_directory + '/' + tool_name
+                    subprocess.check_output(['cp', full_bin_path + '/' + tool['copy_source_name'], output_file_path])
+                    if 'chmod' in tool:
+                        subprocess.check_output(['chmod', tool['chmod'], output_file_path])
+                else:
+                    subprocess.check_output(['cp', full_bin_path + '/' + tool_name, bin_directory])
+                    if 'chmod' in tool:
+                        subprocess.check_output(['chmod', tool['chmod'], bin_directory])
 
     if dry_run:
         print('\nDry run completed. The URLs that would be downloaded are listed below:')
