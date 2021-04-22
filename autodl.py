@@ -47,7 +47,7 @@ def add_arguments():
     parser.add_argument('-p', '--paths', help = 'File to append PATHs to', default=os.path.expanduser('~') + '/.autodl_paths.sh')
     parser.add_argument('-n','--dry-run', help = 'Just print the URLs to be downloaded without downloading', action='store_true')
     parser.add_argument('-d', '--download-only', help = 'Download the compressed files', action='store_true')
-    parser.add_argument('-b', '--bin-directory', help='Default bin directory to copy the files to', default=os.path.expanduser('~') + '/' + '.bin/local')
+    parser.add_argument('-b', '--bin-directory', help='Default bin directory to copy the files to', default=os.path.expanduser('~') + '/' + 'bin/')
     parser.add_argument('-i', '--include', help='Comma separated list of tool names (as mentioned in repo_names.json) to download. Cannot be used with --exclude. Eg: clangd,gh,bat')
     parser.add_argument('-e', '--exclude', help='Comma separated list of tool names (as mentioned in repo_names.json) to exclude. Cannot be used with --include. Eg: clangd,gh,bat')
     return parser.parse_args()
@@ -121,7 +121,7 @@ def main():
             if 'copy_to_bin' not in tool:
                 paths_to_append.append('export PATH='+full_bin_path+':$PATH')
             else:
-                if tool['copy_source_name']:
+                if 'copy_source_name' in tool:
                     output_file_path = bin_directory + '/' + tool_name
                     subprocess.check_output(['cp', full_bin_path + '/' + tool['copy_source_name'], output_file_path])
                     if 'chmod' in tool:
