@@ -8,7 +8,7 @@ def print_error_valid(msg):
     print("ERROR: Please provide a valid {0}".format(msg))
     exit(2)
 
-def get_url(user, repo, file_pattern, remove_v=False):
+def get_url(user, repo, file_pattern, remove_v=False, releases='latest'):
     if not user:
         print_error_valid("user")
     if not repo:
@@ -18,10 +18,10 @@ def get_url(user, repo, file_pattern, remove_v=False):
 
     result_str = ''
     if sys.version_info.major == 3:
-        result = subprocess.check_output(["curl", "-s", "https://api.github.com/repos/{0}/{1}/releases/latest".format(user, repo)])
+        result = subprocess.check_output(["curl", "-s", "https://api.github.com/repos/{0}/{1}/releases/{2}".format(user, repo, releases)])
         result_str = result.decode('utf-8')
     elif sys.version_info.major == 2:
-        result = subprocess.check_output(["curl", "-s", "https://api.github.com/repos/{0}/{1}/releases/latest".format(user, repo)])
+        result = subprocess.check_output(["curl", "-s", "https://api.github.com/repos/{0}/{1}/releases/{2}".format(user, repo, releases)])
         result_str = result
 
     if not result:
@@ -97,7 +97,10 @@ def main():
         if "remove_v" in tool:
             remove_v = True
 
-        url, tag, filename = get_url(user, repo, file_pattern, remove_v=remove_v)
+        releases = 'latest'
+        if 'releases' in tool:
+          releases = tool['releases']
+        url, tag, filename = get_url(user, repo, file_pattern, remove_v=remove_v, releases=releases)
         if dry_run:
             urls.append(url)
             continue
@@ -115,6 +118,7 @@ def main():
                 subprocess.check_output([uncompress_cmd, uncompress_flags, full_filename])
             else:
                 subprocess.check_output([uncompress_cmd, full_filename])
+            subprocess.check_output(['rm', full_filename])
         if 'bin_dir_pattern' in tool:
             bin_path = tool['bin_dir_pattern'].replace('###',tag)
             full_bin_path = output + '/' + bin_path
