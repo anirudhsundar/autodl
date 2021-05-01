@@ -17,11 +17,11 @@ def get_url(user, repo, file_pattern, remove_v=False, releases='latest'):
         print_error_valid("file_pattern")
 
     result_str = ''
+    prepare_url = "https://api.github.com/repos/{0}/{1}/releases/{2}".format(user, repo, releases)
+    result = subprocess.check_output(["curl", "-s", prepare_url])
     if sys.version_info.major == 3:
-        result = subprocess.check_output(["curl", "-s", "https://api.github.com/repos/{0}/{1}/releases/{2}".format(user, repo, releases)])
         result_str = result.decode('utf-8')
     elif sys.version_info.major == 2:
-        result = subprocess.check_output(["curl", "-s", "https://api.github.com/repos/{0}/{1}/releases/{2}".format(user, repo, releases)])
         result_str = result
 
     if not result:
@@ -29,9 +29,9 @@ def get_url(user, repo, file_pattern, remove_v=False, releases='latest'):
         exit(2)
     # result_str = result.stdout.decode('utf-8')
     val = json.loads(result_str)
-    if not val:
+    if not val or 'tag_name' not in val:
         print("ERROR: tag_name not found in repo. please check the url...")
-        exit(2)
+        return '', '', ''
 
     tag_name = val["tag_name"]
     file_tag = tag_name
@@ -50,6 +50,7 @@ def add_arguments():
     parser.add_argument('-b', '--bin-directory', help='Default bin directory to copy the files to', default=os.path.expanduser('~') + '/' + 'bin/')
     parser.add_argument('-i', '--include', help='Comma separated list of tool names (as mentioned in repo_names.json) to download. Cannot be used with --exclude. Eg: clangd,gh,bat')
     parser.add_argument('-e', '--exclude', help='Comma separated list of tool names (as mentioned in repo_names.json) to exclude. Cannot be used with --include. Eg: clangd,gh,bat')
+    parser.add_argument('-l', '--list', help='Just list the tools that would be downloaded and exit', action='store_true')
     return parser.parse_args()
 
 
@@ -64,12 +65,12 @@ def main():
     bin_directory = args.bin_directory.strip()
     include, exclude = [], []
     if args.include:
-      include = args.include.split(",")
+        include = args.include.split(",")
     if args.exclude:
-      exclude = args.exclude.split(",")
+        exclude = args.exclude.split(",")
 
     if include and exclude:
-      print('ERROR: Cannot use both "--include" and "--exclude" flags simultaneously. Please remove one of them')
+        print('ERROR: Cannot use both "--include" and "--exclude" flags simultaneously. Please remove one of them')
 
     paths_to_append = []
     urls = []
@@ -79,19 +80,24 @@ def main():
     for tool in tool_config:
         tool_name = tool['name']
         if include and tool_name not in include:
-          continue
+            continue
         if exclude and tool_name in exclude:
-          continue
+            continue
+        if args.list:
+            print(tool['name'])
+            continue
+        else:
+            print('Preparing to download',tool['name'])
         user = tool['user']
         repo = tool['repo']
         file_pattern = tool['file_pattern']
 
         if 'uncompress' in tool and tool['uncompress']:
-          uncompress_cmd = tool['uncompress_cmd']
-          uncompress_flags = ''
-          if 'uncompress_flags' in tool:
-              uncompress_flags = tool['uncompress_flags']
-              uncompress_flags = re.sub('\s+', ' ', uncompress_flags.strip())
+            uncompress_cmd = tool['uncompress_cmd']
+            uncompress_flags = ''
+            if 'uncompress_flags' in tool:
+                uncompress_flags = tool['uncompress_flags']
+                uncompress_flags = re.sub(r'\s+', ' ', uncompress_flags.strip())
 
         remove_v = False
         if "remove_v" in tool:
@@ -99,8 +105,10 @@ def main():
 
         releases = 'latest'
         if 'releases' in tool:
-          releases = tool['releases']
+            releases = tool['releases']
         url, tag, filename = get_url(user, repo, file_pattern, remove_v=remove_v, releases=releases)
+        if not url or not tag or not filename:
+            continue
         if dry_run:
             urls.append(url)
             continue
@@ -141,7 +149,7 @@ def main():
     elif download_only:
         print('\nThe list of files downloaded are printed below:')
         print('\n'.join(files))
-    else:
+    elif not args.list:
         print('All files downloaded and the below statements have been added to '+paths)
         paths_to_append = '\n'.join(paths_to_append)
         paths_to_append = '\n'+paths_to_append
