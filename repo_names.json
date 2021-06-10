@@ -84,5 +84,16 @@
         "copy_to_bin": true,
         "copy_source_name": "jq-linux64",
         "chmod": "+x"
+    },
+    {
+        "name": "git-lfs",
+        "user": "git-lfs",
+        "repo": "git-lfs",
+        "file_pattern": "git-lfs-linux-amd64-###.tar.gz",
+        "uncompress_cmd": "tar",
+        "uncompress_flags": "zxf",
+        "uncompress": true,
+        "bin_dir_pattern": "",
+        "copy_to_bin": true
     }
 ]
