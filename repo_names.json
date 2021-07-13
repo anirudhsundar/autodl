@@ -94,5 +94,27 @@
         "uncompress": true,
         "bin_dir_pattern": "",
         "copy_to_bin": true
+    },
+    {
+        "name": "starship",
+        "user": "starship",
+        "repo": "starship",
+        "file_pattern": "starship-x86_64-unknown-linux-musl.tar.gz",
+        "uncompress_cmd": "tar",
+        "uncompress_flags": "zxf",
+        "uncompress": true,
+        "bin_dir_pattern": "",
+        "copy_to_bin": true
+    },
+    {
+        "name": "fd",
+        "user": "sharkdp",
+        "repo": "fd",
+        "file_pattern": "fd-###-x86_64-unknown-linux-musl.tar.gz",
+        "uncompress_cmd": "tar",
+        "uncompress_flags": "zxf",
+        "uncompress": true,
+        "bin_dir_pattern": "fd-###-x86_64-unknown-linux-musl",
+        "copy_to_bin": true
     }
 ]
