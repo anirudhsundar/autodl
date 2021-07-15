@@ -116,5 +116,16 @@
         "uncompress": true,
         "bin_dir_pattern": "fd-###-x86_64-unknown-linux-musl",
         "copy_to_bin": true
+    },
+    {
+        "name": "exa",
+        "user": "ogham",
+        "repo": "exa",
+        "file_pattern": "exa-linux-x86_64-musl-###.zip",
+        "uncompress_cmd": "unzip",
+        "uncompress_flags": "-dexa",
+        "uncompress": true,
+        "bin_dir_pattern": "exa/bin",
+        "copy_to_bin": true
     }
 ]
