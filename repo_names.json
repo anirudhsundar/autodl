@@ -121,7 +121,7 @@
         "name": "exa",
         "user": "ogham",
         "repo": "exa",
-        "file_pattern": "exa-linux-x86_64-musl-###.zip",
+        "file_pattern": "exa-linux-x86_64-###.zip",
         "uncompress_cmd": "unzip",
         "uncompress_flags": "-dexa",
         "uncompress": true,
