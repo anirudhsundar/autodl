@@ -20,6 +20,17 @@
         "uncompress": true
     },
     {
+        "name": "clang",
+        "user": "llvm",
+        "repo": "llvm-project",
+        "file_pattern": "clang+llvm-###-x86_64-linux-gnu-ubuntu-16.04.tar.xz",
+        "tag_replace": ["llvmorg-",""],
+        "bin_dir_pattern": "clang+llvm-###-x86_64-linux-gnu-ubuntu-16.04.tar.xz",
+        "uncompress_cmd": "tar",
+        "uncompress_flags": "xf",
+        "uncompress": true
+    },
+    {
         "name": "rg",
         "user": "BurntSushi",
         "repo": "ripgrep",

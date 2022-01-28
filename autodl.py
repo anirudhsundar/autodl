@@ -8,7 +8,7 @@ def print_error_valid(msg):
     print("ERROR: Please provide a valid {0}".format(msg))
     exit(2)
 
-def get_url(user, repo, file_pattern, remove_v=False, releases='latest'):
+def get_url(user, repo, file_pattern, tag_replace=None, releases='latest'):
     if not user:
         print_error_valid("user")
     if not repo:
@@ -35,8 +35,8 @@ def get_url(user, repo, file_pattern, remove_v=False, releases='latest'):
 
     tag_name = val["tag_name"]
     file_tag = tag_name
-    if remove_v:
-        file_tag = tag_name.replace('v', '')
+    if tag_replace:
+        file_tag = tag_name.replace(tag_replace[0], tag_replace[1])
     file_pattern = file_pattern.replace("###", file_tag)
     download_url = "https://github.com/{0}/{1}/releases/download/{2}/{3}".format(user, repo, tag_name, file_pattern)
     return download_url, file_tag, file_pattern
@@ -99,14 +99,19 @@ def main():
                 uncompress_flags = tool['uncompress_flags']
                 uncompress_flags = re.sub(r'\s+', ' ', uncompress_flags.strip())
 
+        tag_replace = None
+        if "tag_replace" in tool:
+            tag_replace = tool["tag_replace"]
+
         remove_v = False
         if "remove_v" in tool:
             remove_v = True
+            tag_replace = ['v', '']
 
         releases = 'latest'
         if 'releases' in tool:
             releases = tool['releases']
-        url, tag, filename = get_url(user, repo, file_pattern, remove_v=remove_v, releases=releases)
+        url, tag, filename = get_url(user, repo, file_pattern, tag_replace=tag_replace, releases=releases)
         if not url or not tag or not filename:
             continue
         if dry_run:
