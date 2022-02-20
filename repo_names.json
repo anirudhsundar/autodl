@@ -64,6 +64,18 @@
         "copy_to_bin": true
     },
     {
+        "name": "glow",
+        "user": "charmbracelet",
+        "repo": "glow",
+        "file_pattern": "glow_1.4.1_linux_x86_64.tar.gz",
+        "uncompress_cmd": "tar",
+        "uncompress_flags": "zxf",
+        "uncompress": true,
+        "bin_dir_pattern": "",
+        "copy_to_bin": true,
+        "remove_v": true
+    },
+    {
         "name": "broot",
         "user": "Canop",
         "repo": "broot",
