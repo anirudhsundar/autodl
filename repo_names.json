@@ -9,6 +9,16 @@
         "uncompress": true
     },
     {
+        "name": "code-minimap",
+        "user": "wfxr",
+        "repo": "code-minimap",
+        "file_pattern": "code-minimap-###-x86_64-unknown-linux-gnu.tar.gz",
+        "bin_dir_pattern": "code-minimap-###-x86_64-unknown-linux-gnu",
+        "uncompress_cmd": "tar",
+        "uncompress_flags": "zxf",
+        "uncompress": true
+    },
+    {
         "name": "gh",
         "user": "cli",
         "repo": "cli",
