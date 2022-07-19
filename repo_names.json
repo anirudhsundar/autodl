@@ -97,6 +97,16 @@
         "bin_dir_pattern": "broot_all/build/x86_64-unknown-linux-musl"
     },
     {
+        "name": "pandoc",
+        "user": "jgm",
+        "repo": "pandoc",
+        "file_pattern": "pandoc-###-linux-amd64.tar.gz",
+        "uncompress_cmd": "tar",
+        "uncompress_flags": "zxf",
+        "uncompress": true,
+        "bin_dir_pattern": "pandoc-###-linux-amd64/bin"
+    },
+    {
         "name": "nvim",
         "user": "neovim",
         "repo": "neovim",
