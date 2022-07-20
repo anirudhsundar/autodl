@@ -7,7 +7,10 @@ This is a short script to automatically download the latest releases of certain 
 **Requirements**
 - python3+
 
-Just run `python autodl.py` inside the autodl directory to download the files into the current directory. It also extracts the files and adds the `export` commands for the `PATH` to the `~/.local_paths` file. So, just add `source ~/.local_paths` to your bashrc/zshrc/cshrc
+Installation is as simple as
+`pip install -U git+https://github.com/anirudhsundar/autodl.git`
+
+Just run `python -m autodl.autodl` inside the autodl directory to download the files into the current directory. It also extracts the files and adds the `export` commands for the `PATH` to the `~/.local_paths` file. So, just add `source ~/.local_paths` to your bashrc/zshrc/cshrc
 
 For a list of the different options try `python autodl.py -h` to the help.
 

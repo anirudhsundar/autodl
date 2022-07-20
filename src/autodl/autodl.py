@@ -1,12 +1,22 @@
-import os, sys
-import json
-import subprocess
+"""
+This is a short script to automatically download the
+latest releases of certain tools (which are listed in repo_names.json).
+"""
+
 import argparse
+import json
+import os
 import re
+import subprocess
+import sys
+from pathlib import Path
+
+from autodl import utils
+
 
 def print_error_valid(msg):
     print("ERROR: Please provide a valid {0}".format(msg))
-    exit(2)
+    sys.exit(2)
 
 def get_url(user, repo, file_pattern, tag_replace=None, releases='latest'):
     if not user:
@@ -76,7 +86,8 @@ def main():
     urls = []
     files = []
 
-    tool_config = json.load(open('repo_names.json', 'r'))
+    repo_names_path = str(utils.get_config_path())
+    tool_config = json.load(open(repo_names_path, 'r'))
     for tool in tool_config:
         tool_name = tool['name']
         if include and tool_name not in include:
