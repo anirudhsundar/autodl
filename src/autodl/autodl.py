@@ -9,59 +9,15 @@ import os
 import re
 import subprocess
 import sys
-from pathlib import Path
 
 from autodl import utils
+from autodl.url import get_url
+from autodl.argument_parser import add_arguments
 
 
 def print_error_valid(msg):
     print("ERROR: Please provide a valid {0}".format(msg))
     sys.exit(2)
-
-def get_url(user, repo, file_pattern, tag_replace=None, releases='latest'):
-    if not user:
-        print_error_valid("user")
-    if not repo:
-        print_error_valid("repo")
-    if not file_pattern:
-        print_error_valid("file_pattern")
-
-    result_str = ''
-    prepare_url = "https://api.github.com/repos/{0}/{1}/releases/{2}".format(user, repo, releases)
-    result = subprocess.check_output(["curl", "-s", prepare_url])
-    if sys.version_info.major == 3:
-        result_str = result.decode('utf-8')
-    elif sys.version_info.major == 2:
-        result_str = result
-
-    if not result:
-        print("ERROR: couldn't access api. please check the url...")
-        exit(2)
-    # result_str = result.stdout.decode('utf-8')
-    val = json.loads(result_str)
-    if not val or 'tag_name' not in val:
-        print("ERROR: tag_name not found in repo. please check the url...")
-        return '', '', ''
-
-    tag_name = val["tag_name"]
-    file_tag = tag_name
-    if tag_replace:
-        file_tag = tag_name.replace(tag_replace[0], tag_replace[1])
-    file_pattern = file_pattern.replace("###", file_tag)
-    download_url = "https://github.com/{0}/{1}/releases/download/{2}/{3}".format(user, repo, tag_name, file_pattern)
-    return download_url, file_tag, file_pattern
-
-def add_arguments():
-    parser = argparse.ArgumentParser(description='A simple tool that reads repository information from repo_names.json in the current directory and downloads the latest release versions of the given repos from github')
-    parser.add_argument('-o', '--output', help = 'Output directory', default=os.getcwd())
-    parser.add_argument('-p', '--paths', help = 'File to append PATHs to', default=os.path.expanduser('~') + '/.autodl_paths.sh')
-    parser.add_argument('-n','--dry-run', help = 'Just print the URLs to be downloaded without downloading', action='store_true')
-    parser.add_argument('-d', '--download-only', help = 'Download the compressed files', action='store_true')
-    parser.add_argument('-b', '--bin-directory', help='Default bin directory to copy the files to', default=os.path.expanduser('~') + '/' + 'bin/')
-    parser.add_argument('-i', '--include', help='Comma separated list of tool names (as mentioned in repo_names.json) to download. Cannot be used with --exclude. Eg: clangd,gh,bat')
-    parser.add_argument('-e', '--exclude', help='Comma separated list of tool names (as mentioned in repo_names.json) to exclude. Cannot be used with --include. Eg: clangd,gh,bat')
-    parser.add_argument('-l', '--list', help='Just list the tools that would be downloaded and exit', action='store_true')
-    return parser.parse_args()
 
 
 def main():
