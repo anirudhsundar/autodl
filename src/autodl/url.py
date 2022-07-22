@@ -3,6 +3,11 @@ import subprocess
 import sys
 
 
+def print_error_valid(msg):
+    print("ERROR: Please provide a valid {0}".format(msg))
+    sys.exit(2)
+
+
 def get_url(user, repo, file_pattern, tag_replace=None, releases="latest"):
     if not user:
         print_error_valid("user")

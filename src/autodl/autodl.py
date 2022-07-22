@@ -11,17 +11,12 @@ import sys
 
 from autodl import utils
 from autodl.url import get_url
-from autodl.argument_parser import add_arguments
-
-
-def print_error_valid(msg):
-    print("ERROR: Please provide a valid {0}".format(msg))
-    sys.exit(2)
+from autodl.argument_parser import parse_arguments
 
 
 def main():
 
-    args = add_arguments()
+    args = parse_arguments()
 
     output = args.output.strip()
     paths = args.paths.strip()

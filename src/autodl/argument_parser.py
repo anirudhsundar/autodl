@@ -2,7 +2,7 @@ import argparse
 import os
 
 
-def add_arguments():
+def parse_arguments():
     parser = argparse.ArgumentParser(
         description="A simple tool that reads repository information from repo_names.json in the current directory and downloads the latest release versions of the given repos from github"
     )
