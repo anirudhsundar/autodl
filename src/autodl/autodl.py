@@ -12,27 +12,32 @@ import sys
 from autodl import utils
 from autodl.url import get_url
 from autodl.argument_parser import parse_arguments
+from jsonschema import validate, ValidationError
+
+
+class DownloadOptions:
+    def __init__(self, args):
+        self.output = args.output.strip()
+        self.paths = args.paths.strip()
+        self.dry_run = args.dry_run
+        self.download_only = args.download_only
+        self.bin_directory = args.bin_directory.strip()
+        self.include, self.exclude = [], []
+        if args.include:
+            self.include = args.include.split(",")
+        if args.exclude:
+            self.exclude = args.exclude.split(",")
+
+        if self.include and self.exclude:
+            print(
+                'ERROR: Cannot use both "--include" and "--exclude" flags simultaneously. Please remove one of them'
+            )
 
 
 def main():
 
     args = parse_arguments()
-
-    output = args.output.strip()
-    paths = args.paths.strip()
-    dry_run = args.dry_run
-    download_only = args.download_only
-    bin_directory = args.bin_directory.strip()
-    include, exclude = [], []
-    if args.include:
-        include = args.include.split(",")
-    if args.exclude:
-        exclude = args.exclude.split(",")
-
-    if include and exclude:
-        print(
-            'ERROR: Cannot use both "--include" and "--exclude" flags simultaneously. Please remove one of them'
-        )
+    opts = DownloadOptions(args)
 
     paths_to_append = []
     urls = []
@@ -40,11 +45,20 @@ def main():
 
     repo_names_path = str(utils.get_config_path())
     tool_config = json.load(open(repo_names_path, "r"))
+
+    schema_path = str(utils.get_schema_path())
+    schema = json.load(open(schema_path, "r"))
+    try:
+        validate(tool_config, schema=schema)
+    except ValidationError as err:
+        print(f"ValidationError: {err.message}. Please check the below instance in repo_names\n {json.dumps(err.instance, indent=2)}")
+        sys.exit(2)
+
     for tool in tool_config:
         tool_name = tool["name"]
-        if include and tool_name not in include:
+        if opts.include and tool_name not in opts.include:
             continue
-        if exclude and tool_name in exclude:
+        if opts.exclude and tool_name in opts.exclude:
             continue
         if args.list:
             print(tool["name"])
@@ -66,11 +80,6 @@ def main():
         if "tag_replace" in tool:
             tag_replace = tool["tag_replace"]
 
-        remove_v = False
-        if "remove_v" in tool:
-            remove_v = True
-            tag_replace = ["v", ""]
-
         releases = "latest"
         if "releases" in tool:
             releases = tool["releases"]
@@ -79,18 +88,18 @@ def main():
         )
         if not url or not tag or not filename:
             continue
-        if dry_run:
+        if opts.dry_run:
             urls.append(url)
             continue
 
         print("Downloading from... {0}".format(url))
-        full_filename = output + "/" + filename
-        subprocess.check_output(["wget", "-q", "-P", output, url])
-        if download_only:
+        full_filename = opts.output + "/" + filename
+        subprocess.check_output(["wget", "-q", "-P", opts.output, url])
+        if opts.download_only:
             files.append(filename)
             continue
 
-        os.chdir(output)
+        os.chdir(opts.output)
         if "uncompress" in tool and tool["uncompress"]:
             if uncompress_flags:
                 subprocess.check_output(
@@ -101,12 +110,12 @@ def main():
             subprocess.check_output(["rm", full_filename])
         if "bin_dir_pattern" in tool:
             bin_path = tool["bin_dir_pattern"].replace("###", tag)
-            full_bin_path = output + "/" + bin_path
+            full_bin_path = opts.output + "/" + bin_path
             if "copy_to_bin" not in tool:
                 paths_to_append.append("export PATH=" + full_bin_path + ":$PATH")
             else:
                 if "copy_source_name" in tool:
-                    output_file_path = bin_directory + "/" + tool_name
+                    output_file_path = opts.bin_directory + "/" + tool_name
                     subprocess.check_output(
                         [
                             "cp",
@@ -120,27 +129,30 @@ def main():
                         )
                 else:
                     subprocess.check_output(
-                        ["cp", full_bin_path + "/" + tool_name, bin_directory]
+                        ["cp", full_bin_path + "/" + tool_name, opts.bin_directory]
                     )
                     if "chmod" in tool:
-                        subprocess.check_output(["chmod", tool["chmod"], bin_directory])
+                        subprocess.check_output(
+                            ["chmod", tool["chmod"], opts.bin_directory]
+                        )
 
-    if dry_run:
+    if opts.dry_run:
         print(
             "\nDry run completed. The URLs that would be downloaded are listed below:"
         )
         print("\n".join(urls))
-    elif download_only:
+    elif opts.download_only:
         print("\nThe list of files downloaded are printed below:")
         print("\n".join(files))
     elif not args.list:
         print(
-            "All files downloaded and the below statements have been added to " + paths
+            "All files downloaded and the below statements have been added to "
+            + opts.paths
         )
         paths_to_append = "\n".join(paths_to_append)
         paths_to_append = "\n" + paths_to_append
         print(paths_to_append)
-        with open(paths, "a") as paths_file:
+        with open(opts.paths, "a") as paths_file:
             paths_file.write(paths_to_append)
 
 

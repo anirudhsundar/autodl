@@ -1,0 +1,61 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "name": {
+                "type": "string"
+            },
+            "user": {
+                "type": "string"
+            },
+            "repo": {
+                "type": "string"
+            },
+            "file_pattern": {
+                "type": "string"
+            },
+            "bin_dir_pattern": {
+                "type": "string"
+            },
+            "uncompress_cmd": {
+                "type": "string"
+            },
+            "uncompress": {
+                "type": "boolean"
+            },
+            "uncompress_flags": {
+                "type": "string"
+            },
+            "tag_replace": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "minItems": 2,
+                "maxItems": 2
+            },
+            "copy_to_bin": {
+                "type": "boolean"
+            },
+            "releases": {
+                "type": "string"
+            },
+            "copy_source_name": {
+                "type": "string"
+            },
+            "chmod": {
+                "type": "string"
+            }
+        },
+        "required": [
+            "bin_dir_pattern",
+            "file_pattern",
+            "name",
+            "repo",
+            "uncompress",
+            "user"
+        ]
+    }
+}

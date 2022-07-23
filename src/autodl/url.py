@@ -8,18 +8,18 @@ def print_error_valid(msg):
     sys.exit(2)
 
 
-def get_url(user, repo, file_pattern, tag_replace=None, releases="latest"):
+def get_url(user, repo, file_pattern, tag_replace=["", ""], releases="latest"):
     if not user:
         print_error_valid("user")
     if not repo:
         print_error_valid("repo")
     if not file_pattern:
         print_error_valid("file_pattern")
+    if len(tag_replace) != 2:
+        print_error_valid("tag_replace: Found more than 2 values for tag_replace")
 
     result_str = ""
-    prepare_url = "https://api.github.com/repos/{0}/{1}/releases/{2}".format(
-        user, repo, releases
-    )
+    prepare_url = f"https://api.github.com/repos/{user}/{repo}/releases/{releases}"
     result = subprocess.check_output(["curl", "-s", prepare_url])
     if sys.version_info.major == 3:
         result_str = result.decode("utf-8")
@@ -29,7 +29,7 @@ def get_url(user, repo, file_pattern, tag_replace=None, releases="latest"):
     if not result:
         print("ERROR: couldn't access api. please check the url...")
         sys.exit(2)
-    # result_str = result.stdout.decode('utf-8')
+
     val = json.loads(result_str)
     if not val or "tag_name" not in val:
         print("ERROR: tag_name not found in repo. please check the url...")
@@ -37,8 +37,7 @@ def get_url(user, repo, file_pattern, tag_replace=None, releases="latest"):
 
     tag_name = val["tag_name"]
     file_tag = tag_name
-    if tag_replace:
-        file_tag = tag_name.replace(tag_replace[0], tag_replace[1])
+    file_tag = tag_name.replace(*tag_replace)
     file_pattern = file_pattern.replace("###", file_tag)
     download_url = "https://github.com/{0}/{1}/releases/download/{2}/{3}".format(
         user, repo, tag_name, file_pattern

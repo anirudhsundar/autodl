@@ -23,7 +23,7 @@
         "user": "cli",
         "repo": "cli",
         "file_pattern": "gh_###_linux_amd64.tar.gz",
-        "remove_v": true,
+        "tag_replace": ["v",""],
         "bin_dir_pattern": "gh_###_linux_amd64/bin",
         "uncompress_cmd": "tar",
         "uncompress_flags": "zxf",
@@ -83,13 +83,13 @@
         "uncompress": true,
         "bin_dir_pattern": "",
         "copy_to_bin": true,
-        "remove_v": true
+        "tag_replace": ["v",""]
     },
     {
         "name": "broot",
         "user": "Canop",
         "repo": "broot",
-        "remove_v": true,
+        "tag_replace": ["v",""],
         "file_pattern": "broot_###.zip",
         "uncompress_cmd": "unzip",
         "uncompress_flags": "-dbroot_all",
@@ -114,7 +114,8 @@
         "uncompress_cmd": "tar",
         "uncompress_flags": "zxf",
         "uncompress": true,
-        "bin_dir_pattern": "nvim-linux64/bin"
+        "bin_dir_pattern": "nvim-linux64/bin",
+        "releases": "nightly"
     },
     {
         "name": "jq",
