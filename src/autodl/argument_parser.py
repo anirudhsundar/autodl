@@ -4,7 +4,7 @@ import os
 
 def parse_arguments():
     parser = argparse.ArgumentParser(
-        description="A simple tool that reads repository information from repo_names.json in the current directory and downloads the latest release versions of the given repos from github"
+        description="A simple tool that reads repository information from repo_names.json in the current directory and downloads the latest release versions or any specified version of the given repos from github. It also supports extracting the downloaded file, and setting up the PATH variable to point to the bin directory"
     )
     parser.add_argument("-o", "--output", help="Output directory", default=os.getcwd())
     parser.add_argument(

@@ -27,8 +27,8 @@ This json file just contains a list of json objects/dictionaries where each obje
         "user": "cli", // The user/organization part of github url
         "repo": "cli", // The repository part of github url
         "file_pattern": "gh_###_linux_amd64.tar.gz", // The filename to be downloaded with ### replacing the version
-        "remove_v": true, // if the version tag contains a v, but the filename does not, this should be true
-        "bin_dir_pattern": "gh_###_linux_amd64/bin", the directory structure to bin, created after uncompressing
+        "tag_replace": ["v",""], // if the version tag contains a v, but the filename does not, this should be true
+        "bin_dir_pattern": "gh_###_linux_amd64/bin", // the directory structure to bin, created after uncompressing
         "uncompress_cmd": "tar", // uncompression command to be used based on the file type
         "uncompress_flags": "zxf", // Any extra uncompression flags to be used
         "uncompress": true // decided if uncompression should be done

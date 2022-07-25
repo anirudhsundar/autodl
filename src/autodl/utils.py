@@ -9,4 +9,4 @@ def get_config_path():
 
 def get_schema_path():
     ROOT_DIR = get_root_dir()
-    return Path(Path(ROOT_DIR)/'repo_names_schema.json')
+    return Path(Path(ROOT_DIR)/'repo_names.schema.json')

@@ -1,14 +1,26 @@
 import json
-import subprocess
 import sys
+import requests
 
 
 def print_error_valid(msg):
     print("ERROR: Please provide a valid {0}".format(msg))
     sys.exit(2)
 
+def fetch_download_api(prepare_url, releases):
+    response = requests.get(prepare_url)
+    if response.status_code != 200:
+        prepare_url = f"tags/{releases}".join(prepare_url.rsplit(releases, 1))
+        response = requests.get(prepare_url)
+        if response.status_code != 200:
+            print("ERROR: couldn't access api. please check the url...")
+            return None
 
-def get_url(user, repo, file_pattern, tag_replace=["", ""], releases="latest"):
+    return json.loads(response.text)
+
+
+
+def get_url(user, repo, file_pattern, tag_replace=("", ""), releases="latest"):
     if not user:
         print_error_valid("user")
     if not repo:
@@ -20,19 +32,9 @@ def get_url(user, repo, file_pattern, tag_replace=["", ""], releases="latest"):
 
     result_str = ""
     prepare_url = f"https://api.github.com/repos/{user}/{repo}/releases/{releases}"
-    result = subprocess.check_output(["curl", "-s", prepare_url])
-    if sys.version_info.major == 3:
-        result_str = result.decode("utf-8")
-    elif sys.version_info.major == 2:
-        result_str = result
-
-    if not result:
-        print("ERROR: couldn't access api. please check the url...")
-        sys.exit(2)
-
-    val = json.loads(result_str)
+    val = fetch_download_api(prepare_url, releases)
     if not val or "tag_name" not in val:
-        print("ERROR: tag_name not found in repo. please check the url...")
+        print(f"ERROR: tag_name not found in repo. The constructed URL was {prepare_url} please check the url...")
         return "", "", ""
 
     tag_name = val["tag_name"]

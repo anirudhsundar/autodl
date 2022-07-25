@@ -1,0 +1,77 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "array",
+    "title": "Simple to to download and manage latest releases from github",
+    "description": "A simple tool that reads repository information from repo_names.json in the current directory and downloads the latest release versions or any specified version of the given repos from github. It also supports extracting the downloaded file, and setting up the PATH variable to point to the bin directory",
+    "items": {
+        "type": "object",
+        "properties": {
+            "name": {
+                "description": "Name of the final binary. Eg: `gh` for the github cli downloaded from the releases of [https://github.com/cli/cli](https://github.com/cli/cli)",
+                "type": "string"
+            },
+            "user": {
+                "description": "The user/organization part of github url. Eg: `sharkdp` in the URL [https://github.com/sharkdp/bat](https://github.com/sharkdp/bat)",
+                "type": "string"
+            },
+            "repo": {
+                "description": "The repository part of github url. Eg: `bat` in the URL [https://github.com/sharkdp/bat](https://github.com/sharkdp/bat)",
+                "type": "string"
+            },
+            "file_pattern": {
+                "description": "The filename to be downloaded with ### replacing the version. Eg: `gh_2.13.0_linux_amd64.tar.gz` becomes `gh_###_linux_amd64.tar.gz`",
+                "type": "string"
+            },
+            "bin_dir_pattern": {
+                "description": "The directory path to bin, created after uncompressing. Eg: `broot_all/build/x86_64-unknown-linux-musl` if path to bin directory from extracted root directory is `broot_all/build/x86_64-unknown-linux-musl/bin`",
+                "type": "string"
+            },
+            "uncompress_cmd": {
+                "description": "Command to use if the downloaded file has to be uncompressed automatically. Eg: `tar` or `unzip`",
+                "type": "string"
+            },
+            "uncompress": {
+                "description": "Whether to uncompress the downloaded file. The `uncompress_cmd` and `uncompress_flags` keys are not used if this is false",
+                "type": "boolean"
+            },
+            "uncompress_flags": {
+                "description": "Flags/options to pass to the uncompress_cmd if it is used. Eg: `zxf` for tar command to extract a `.tar.gz` file",
+                "type": "string"
+            },
+            "tag_replace": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "description": "Sometimes the tag part of the URL contains some extra characters added like v1.4.0 for version 1.4.0. Here the character 'v' would only be present in the tag and not in the filename, and hence has to be removed from the file name when generating the URL for download ",
+                "minItems": 2,
+                "maxItems": 2
+            },
+            "copy_to_bin": {
+                "description": "If there is just a single binary, it could be copied directly to ~/.bin which would already be in the PATH. This can be used for smaller tools that only contain a single binary and no dependencies",
+                "type": "boolean"
+            },
+            "releases": {
+                "description": "By default this is set to latest, and if we would like to use a different tag, that tag can be menstioned here",
+                "default": "latest",
+                "type": "string"
+            },
+            "copy_source_name": {
+                "description": "If the original source filename is different from what we would like to use for the command, mention the source filename here",
+                "type": "string"
+            },
+            "chmod": {
+                "description": "If you would like to update permissions for the copied binary, pass the chmod flags here",
+                "type": "string"
+            }
+        },
+        "required": [
+            "bin_dir_pattern",
+            "file_pattern",
+            "name",
+            "repo",
+            "uncompress",
+            "user"
+        ]
+    }
+}

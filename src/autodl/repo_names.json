@@ -33,11 +33,12 @@
         "name": "clang",
         "user": "llvm",
         "repo": "llvm-project",
-        "file_pattern": "clang+llvm-###-x86_64-linux-gnu-ubuntu-16.04.tar.xz",
+        "file_pattern": "clang+llvm-###-x86_64-linux-gnu-ubuntu-18.04.tar.xz",
         "tag_replace": ["llvmorg-",""],
-        "bin_dir_pattern": "clang+llvm-###-x86_64-linux-gnu-ubuntu-16.04.tar.xz",
+        "bin_dir_pattern": "clang+llvm-###-x86_64-linux-gnu-ubuntu-18.04.tar.xz",
         "uncompress_cmd": "tar",
         "uncompress_flags": "xf",
+        "releases": "llvmorg-14.0.0",
         "uncompress": true
     },
     {
@@ -115,7 +116,7 @@
         "uncompress_flags": "zxf",
         "uncompress": true,
         "bin_dir_pattern": "nvim-linux64/bin",
-        "releases": "nightly"
+        "releases": "v0.7.0"
     },
     {
         "name": "jq",
