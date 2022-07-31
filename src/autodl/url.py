@@ -7,6 +7,7 @@ def print_error_valid(msg):
     print("ERROR: Please provide a valid {0}".format(msg))
     sys.exit(2)
 
+
 def fetch_download_api(prepare_url, releases):
     response = requests.get(prepare_url)
     if response.status_code != 200:
@@ -17,7 +18,6 @@ def fetch_download_api(prepare_url, releases):
             return None
 
     return json.loads(response.text)
-
 
 
 def get_url(user, repo, file_pattern, tag_replace=("", ""), releases="latest"):
@@ -34,7 +34,9 @@ def get_url(user, repo, file_pattern, tag_replace=("", ""), releases="latest"):
     prepare_url = f"https://api.github.com/repos/{user}/{repo}/releases/{releases}"
     val = fetch_download_api(prepare_url, releases)
     if not val or "tag_name" not in val:
-        print(f"ERROR: tag_name not found in repo. The constructed URL was {prepare_url} please check the url...")
+        print(
+            f"ERROR: tag_name not found in repo. The constructed URL was {prepare_url} please check the url..."
+        )
         return "", "", ""
 
     tag_name = val["tag_name"]
