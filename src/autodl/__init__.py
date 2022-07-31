@@ -5,7 +5,7 @@ def run_autodl():
     """Run autodl
     argv can be a sequence of strings normally supplied as arguments on the command line
     """
-    from autodl.autodl import main
+    from autodl.main import main
 
     try:
         main()
