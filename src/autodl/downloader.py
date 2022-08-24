@@ -70,7 +70,7 @@ def download_and_setup(args):
                 uncompress_flags = tool["uncompress_flags"]
                 uncompress_flags = re.sub(r"\s+", " ", uncompress_flags.strip())
 
-        tag_replace = None
+        tag_replace = ("","")
         if "tag_replace" in tool:
             tag_replace = tool["tag_replace"]
 
