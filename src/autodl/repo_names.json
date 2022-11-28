@@ -53,6 +53,29 @@
         "uncompress": true
     },
     {
+        "name": "difft",
+        "user": "Wilfred",
+        "repo": "difftastic",
+        "file_pattern": "difft-x86_64-unknown-linux-gnu.tar.gz",
+        "bin_dir_pattern": "",
+        "copy_to_bin": true,
+        "uncompress_cmd": "tar",
+        "uncompress_flags": "zxf",
+        "uncompress": true
+    },
+    {
+        "name": "zoxide",
+        "user": "ajeetdsouza",
+        "repo": "zoxide",
+        "file_pattern": "zoxide-###-x86_64-unknown-linux-musl.tar.gz",
+        "bin_dir_pattern": "",
+        "copy_to_bin": true,
+        "uncompress_cmd": "tar",
+        "uncompress_flags": "zxf",
+        "tag_replace": ["v",""],
+        "uncompress": true
+    },
+    {
         "name": "bat",
         "user": "sharkdp",
         "repo": "bat",
