@@ -139,7 +139,6 @@
         "uncompress_flags": "zxf",
         "uncompress": true,
         "bin_dir_pattern": "nvim-linux64/bin",
-        "releases": "v0.7.0"
     },
     {
         "name": "jq",
