@@ -138,7 +138,7 @@
         "uncompress_cmd": "tar",
         "uncompress_flags": "zxf",
         "uncompress": true,
-        "bin_dir_pattern": "nvim-linux64/bin",
+        "bin_dir_pattern": "nvim-linux64/bin"
     },
     {
         "name": "jq",
